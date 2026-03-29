@@ -61,6 +61,14 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 
 app.listen(PORT, () => {
   console.log(`CogniClaim API running on http://localhost:${PORT}`);
+
+  // Keep-alive ping every 14 min to prevent Render free tier spin-down
+  if (process.env.NODE_ENV === 'production') {
+    const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+    setInterval(() => {
+      fetch(`${SELF_URL}/health`).catch(() => {});
+    }, 14 * 60 * 1000);
+  }
 });
 
 export default app;
