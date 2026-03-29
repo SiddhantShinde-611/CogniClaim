@@ -53,6 +53,28 @@ app.get('/health', (_req, res) => {
   res.json({ success: true, data: { status: 'ok', app: 'CogniClaim API', timestamp: new Date().toISOString() } });
 });
 
+// Temporary debug endpoint — shows env var status + DB connectivity
+app.get('/debug', async (_req, res) => {
+  const { prisma } = await import('./lib/prisma');
+  const dbUrl = process.env.DATABASE_URL || '';
+  const masked = dbUrl.replace(/:([^@]+)@/, ':***@');
+  let dbOk = false;
+  let dbError = '';
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    dbOk = true;
+  } catch (e: any) {
+    dbError = e?.message || String(e);
+  }
+  res.json({
+    DB_HOST_set: !!process.env.DB_HOST,
+    DB_PASSWORD_set: !!process.env.DB_PASSWORD,
+    DATABASE_URL: masked,
+    db_connected: dbOk,
+    db_error: dbError,
+  });
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
