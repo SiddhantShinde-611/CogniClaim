@@ -1,16 +1,4 @@
 import 'dotenv/config';
-
-// Build DATABASE_URL from parts if DB_HOST + DB_PASSWORD are supplied
-// (avoids URL-encoding issues with special chars like @ in passwords)
-// DB_HOST/DB_PASSWORD always take priority over a pre-set DATABASE_URL
-if (process.env.DB_HOST && process.env.DB_PASSWORD) {
-  const pw  = encodeURIComponent(process.env.DB_PASSWORD);
-  const host = process.env.DB_HOST;
-  const ref  = process.env.DB_REF || '';
-  const url  = `postgresql://postgres${ref}:${pw}@${host}:5432/postgres?sslmode=require`;
-  process.env.DATABASE_URL = url;
-  process.env.DIRECT_URL   = url;
-}
 import express from 'express';
 import cors from 'cors';
 import { authRoutes } from './routes/auth.routes';
@@ -53,7 +41,7 @@ app.get('/health', (_req, res) => {
   res.json({ success: true, data: { status: 'ok', app: 'CogniClaim API', timestamp: new Date().toISOString() } });
 });
 
-// Temporary debug endpoint — shows env var status + DB connectivity
+// Temporary debug
 app.get('/debug', async (_req, res) => {
   const { prisma } = await import('./lib/prisma');
   const dbUrl = process.env.DATABASE_URL || '';
@@ -66,13 +54,7 @@ app.get('/debug', async (_req, res) => {
   } catch (e: any) {
     dbError = e?.message || String(e);
   }
-  res.json({
-    DB_HOST_set: !!process.env.DB_HOST,
-    DB_PASSWORD_set: !!process.env.DB_PASSWORD,
-    DATABASE_URL: masked,
-    db_connected: dbOk,
-    db_error: dbError,
-  });
+  res.json({ DATABASE_URL: masked, db_connected: dbOk, db_error: dbError });
 });
 
 // Routes
