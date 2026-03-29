@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # CogniClaim
 
 **AI-assisted expense reimbursement management platform**
