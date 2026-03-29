@@ -9,6 +9,15 @@ export async function initiateApprovalWorkflow(
   const employee = await prisma.user.findUnique({ where: { id: employeeId } });
   if (!employee) throw new Error('Employee not found');
 
+  // ADMIN expenses are auto-approved — no one is above admin
+  if (employee.role === Role.ADMIN) {
+    await prisma.expense.update({
+      where: { id: expenseId },
+      data: { status: ExpenseStatus.APPROVED },
+    });
+    return;
+  }
+
   const policy = await prisma.approvalPolicy.findFirst({
     where: { company_id: companyId },
     include: { steps: { orderBy: { step_order: 'asc' } } },
@@ -16,6 +25,19 @@ export async function initiateApprovalWorkflow(
 
   if (!policy || policy.steps.length === 0) {
     // No policy: auto-approve
+    await prisma.expense.update({
+      where: { id: expenseId },
+      data: { status: ExpenseStatus.APPROVED },
+    });
+    return;
+  }
+
+  // MANAGER expenses skip MANAGER-level steps — only ADMIN steps apply
+  const stepsToUse = employee.role === Role.MANAGER
+    ? policy.steps.filter((s) => s.approver_role === Role.ADMIN || s.approver_user_id !== null)
+    : policy.steps;
+
+  if (stepsToUse.length === 0) {
     await prisma.expense.update({
       where: { id: expenseId },
       data: { status: ExpenseStatus.APPROVED },
@@ -31,7 +53,7 @@ export async function initiateApprovalWorkflow(
 
   // If employee's manager is set as approver, create request for manager first
   if (employee.is_manager_approver && employee.manager_id) {
-    const firstStep = policy.steps[0];
+    const firstStep = stepsToUse[0];
     await prisma.approvalRequest.create({
       data: {
         expense_id: expenseId,
@@ -43,7 +65,7 @@ export async function initiateApprovalWorkflow(
     return;
   }
 
-  await createApprovalRequestForStep(expenseId, policy.steps[0], companyId);
+  await createApprovalRequestForStep(expenseId, stepsToUse[0], companyId);
 }
 
 async function createApprovalRequestForStep(
