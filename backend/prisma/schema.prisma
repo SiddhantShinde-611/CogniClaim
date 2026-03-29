@@ -1,0 +1,165 @@
+// CogniClaim - Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum ExpenseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  UNDER_REVIEW
+}
+
+enum RuleType {
+  SEQUENTIAL
+  PERCENTAGE
+  SPECIFIC
+  HYBRID
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Company {
+  id            String   @id @default(cuid())
+  name          String
+  currency_code String   @default("USD")
+  country       String
+  created_at    DateTime @default(now())
+
+  users             User[]
+  approval_policies ApprovalPolicy[]
+
+  @@map("companies")
+}
+
+model User {
+  id                  String   @id @default(cuid())
+  company_id          String
+  email               String   @unique
+  password_hash       String
+  role                Role     @default(EMPLOYEE)
+  manager_id          String?
+  is_manager_approver Boolean  @default(false)
+  refresh_token       String?
+  created_at          DateTime @default(now())
+
+  company  Company @relation(fields: [company_id], references: [id])
+  manager  User?   @relation("ManagerEmployee", fields: [manager_id], references: [id])
+  reports  User[]  @relation("ManagerEmployee")
+
+  expenses          Expense[]         @relation("EmployeeExpenses")
+  approval_requests ApprovalRequest[] @relation("ApproverRequests")
+  audit_logs_actor  AuditLog[]        @relation("ActorLogs")
+  specific_steps    ApprovalStep[]    @relation("SpecificApprover")
+  specific_policies ApprovalPolicy[]  @relation("SpecificApprover")
+
+  @@map("users")
+}
+
+model Expense {
+  id               String        @id @default(cuid())
+  employee_id      String
+  amount           Float
+  currency         String
+  converted_amount Float?
+  base_currency    String?
+  category         String
+  description      String
+  expense_date     DateTime
+  status           ExpenseStatus @default(PENDING)
+  receipt_url      String?
+  merchant_name    String?
+  created_at       DateTime      @default(now())
+
+  employee          User              @relation("EmployeeExpenses", fields: [employee_id], references: [id])
+  approval_requests ApprovalRequest[]
+  audit_logs        AuditLog[]
+
+  @@map("expenses")
+}
+
+model ApprovalPolicy {
+  id                    String   @id @default(cuid())
+  company_id            String
+  name                  String
+  rule_type             RuleType @default(SEQUENTIAL)
+  percentage_threshold  Float?
+  specific_approver_id  String?
+
+  company           Company        @relation(fields: [company_id], references: [id])
+  specific_approver User?          @relation("SpecificApprover", fields: [specific_approver_id], references: [id])
+  steps             ApprovalStep[]
+
+  @@map("approval_policies")
+}
+
+model ApprovalStep {
+  id               String  @id @default(cuid())
+  policy_id        String
+  step_order       Int
+  approver_role    Role?
+  approver_user_id String?
+
+  policy            ApprovalPolicy    @relation(fields: [policy_id], references: [id])
+  specific_approver User?             @relation("SpecificApprover", fields: [approver_user_id], references: [id])
+  approval_requests ApprovalRequest[]
+
+  @@map("approval_steps")
+}
+
+model ApprovalRequest {
+  id          String         @id @default(cuid())
+  expense_id  String
+  step_id     String
+  approver_id String
+  status      ApprovalStatus @default(PENDING)
+  comment     String?
+  decided_at  DateTime?
+  created_at  DateTime       @default(now())
+
+  expense  Expense      @relation(fields: [expense_id], references: [id])
+  step     ApprovalStep @relation(fields: [step_id], references: [id])
+  approver User         @relation("ApproverRequests", fields: [approver_id], references: [id])
+
+  @@map("approval_requests")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  expense_id String
+  actor_id   String
+  action     String
+  metadata   Json
+  ip_address String?
+  created_at DateTime @default(now())
+
+  expense Expense @relation(fields: [expense_id], references: [id])
+  actor   User    @relation("ActorLogs", fields: [actor_id], references: [id])
+
+  @@map("audit_logs")
+}
+
+model ExchangeRateCache {
+  id            String   @id @default(cuid())
+  base_currency String   @unique
+  rates         Json
+  fetched_at    DateTime @default(now())
+
+  @@map("exchange_rate_cache")
+}
