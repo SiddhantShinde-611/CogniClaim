@@ -18,7 +18,6 @@ export function useAuth() {
       login(userData as User, access_token, refresh_token);
       const role = (userData as User).role;
       if (role === 'ADMIN') navigate('/admin');
-      else if (role === 'MANAGER') navigate('/manager');
       else navigate('/employee');
     },
   });
