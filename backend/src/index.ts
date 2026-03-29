@@ -44,17 +44,16 @@ app.get('/health', (_req, res) => {
 // Temporary debug
 app.get('/debug', async (_req, res) => {
   const { prisma } = await import('./lib/prisma');
-  const dbUrl = process.env.DATABASE_URL || '';
-  const masked = dbUrl.replace(/:([^@]+)@/, ':***@');
-  let dbOk = false;
-  let dbError = '';
+  let userCount = 0;
+  let userError = '';
+  let sampleUser: any = null;
   try {
-    await prisma.$queryRaw`SELECT 1`;
-    dbOk = true;
+    userCount = await prisma.user.count();
+    sampleUser = await prisma.user.findFirst({ select: { email: true, role: true } });
   } catch (e: any) {
-    dbError = e?.message || String(e);
+    userError = e?.message || String(e);
   }
-  res.json({ DATABASE_URL: masked, db_connected: dbOk, db_error: dbError });
+  res.json({ user_count: userCount, sample_user: sampleUser, user_error: userError });
 });
 
 // Routes
