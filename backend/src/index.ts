@@ -42,18 +42,12 @@ app.get('/health', (_req, res) => {
 });
 
 // Temporary debug
-app.get('/debug', async (_req, res) => {
-  const { prisma } = await import('./lib/prisma');
-  let userCount = 0;
-  let userError = '';
-  let sampleUser: any = null;
-  try {
-    userCount = await prisma.user.count();
-    sampleUser = await prisma.user.findFirst({ select: { email: true, role: true } });
-  } catch (e: any) {
-    userError = e?.message || String(e);
-  }
-  res.json({ user_count: userCount, sample_user: sampleUser, user_error: userError });
+app.get('/debug', (_req, res) => {
+  res.json({
+    JWT_SECRET_set: !!process.env.JWT_SECRET,
+    REFRESH_TOKEN_SECRET_set: !!process.env.REFRESH_TOKEN_SECRET,
+    ANTHROPIC_API_KEY_set: !!process.env.ANTHROPIC_API_KEY,
+  });
 });
 
 // Routes
