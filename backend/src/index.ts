@@ -41,34 +41,6 @@ app.get('/health', (_req, res) => {
   res.json({ success: true, data: { status: 'ok', app: 'CogniClaim API', timestamp: new Date().toISOString() } });
 });
 
-// Temporary debug
-app.get('/debug', async (_req, res) => {
-  const { prisma } = await import('./lib/prisma');
-  const bcrypt = await import('bcryptjs');
-  const jwt = await import('jsonwebtoken');
-  const steps: any = {};
-  try {
-    const user = await prisma.user.findUnique({
-      where: { email: 'admin@nexussolut.demo' },
-      include: { company: true },
-    });
-    steps.user_found = !!user;
-    steps.has_hash = !!user?.password_hash;
-    steps.hash_preview = user?.password_hash?.slice(0, 10);
-    if (user) {
-      const valid = await bcrypt.default.compare('Demo@1234', user.password_hash);
-      steps.password_valid = valid;
-      if (valid) {
-        const token = jwt.default.sign({ id: user.id }, process.env.JWT_SECRET!);
-        steps.token_generated = !!token;
-      }
-    }
-  } catch (e: any) {
-    steps.error = e?.message || String(e);
-  }
-  res.json(steps);
-});
-
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);

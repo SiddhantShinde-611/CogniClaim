@@ -148,9 +148,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         },
       },
     });
-  } catch (err: any) {
+  } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ success: false, error: 'Login failed', detail: err?.message || String(err) });
+    res.status(500).json({ success: false, error: 'Login failed' });
   }
 };
 
