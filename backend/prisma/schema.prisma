@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -145,7 +146,7 @@ model AuditLog {
   expense_id String
   actor_id   String
   action     String
-  metadata   Json
+  metadata   Json     @default("{}")
   ip_address String?
   created_at DateTime @default(now())
 
