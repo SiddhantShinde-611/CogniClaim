@@ -3,16 +3,16 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 rounded-lg text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center gap-2 rounded-lg text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        primary: 'bg-primary text-white hover:bg-primary-600 shadow-sm',
-        secondary: 'bg-white text-primary border border-primary hover:bg-primary-50',
-        danger: 'bg-danger text-white hover:bg-red-700 shadow-sm',
-        ghost: 'text-text-primary hover:bg-gray-100',
-        outline: 'border border-gray-200 text-text-primary bg-white hover:bg-surface',
-        success: 'bg-success text-white hover:bg-green-700 shadow-sm',
+        primary: 'bg-primary-700 text-text-inverse hover:bg-primary-800 shadow-sm',
+        secondary: 'bg-canvas text-text-primary border border-border-strong hover:bg-panel',
+        danger: 'bg-danger text-white hover:bg-red-800 shadow-sm',
+        ghost: 'text-text-secondary hover:bg-panel hover:text-text-primary rounded-md',
+        outline: 'border border-border text-text-secondary bg-canvas hover:bg-panel rounded-md',
+        success: 'bg-success text-white hover:bg-green-800 shadow-sm',
         accent: 'bg-accent text-white hover:bg-accent-600 shadow-sm',
       },
       size: {

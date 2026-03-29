@@ -15,10 +15,10 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="flex flex-col gap-1">
         {label && (
-          <label htmlFor={textareaId} className="text-sm font-medium text-text-primary flex items-center gap-1">
+          <label htmlFor={textareaId} className="text-sm font-medium text-text-primary flex items-center gap-1.5">
             {label}
             {lowConfidence && (
-              <span className="text-xs text-accent font-normal bg-yellow-50 px-1.5 py-0.5 rounded border border-yellow-200">
+              <span className="text-xs text-accent-700 font-normal bg-accent-50 px-1.5 py-0.5 rounded-sm border border-accent-200">
                 Low confidence
               </span>
             )}
@@ -28,17 +28,17 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={textareaId}
           ref={ref}
           className={cn(
-            'flex min-h-[80px] w-full rounded-lg border bg-white px-3 py-2 text-sm text-text-primary placeholder:text-gray-400',
-            'transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent',
+            'flex min-h-[80px] w-full rounded-sm border bg-canvas px-3 py-2 text-sm text-text-primary placeholder:text-text-muted',
+            'transition-colors focus:outline-none focus:border-primary-600',
             'disabled:cursor-not-allowed disabled:opacity-50 resize-y',
-            error ? 'border-danger focus:ring-danger' : 'border-gray-200',
-            lowConfidence && !error ? 'border-accent bg-yellow-50' : '',
+            error ? 'border-danger' : 'border-border-strong',
+            lowConfidence && !error ? 'border-accent-400 bg-accent-50' : '',
             className
           )}
           {...props}
         />
         {error && <p className="text-xs text-danger">{error}</p>}
-        {hint && !error && <p className="text-xs text-gray-500">{hint}</p>}
+        {hint && !error && <p className="text-xs text-text-muted">{hint}</p>}
       </div>
     );
   }

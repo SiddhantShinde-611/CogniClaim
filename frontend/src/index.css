@@ -1,10 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --radius: 0.5rem;
+    --radius: 0.25rem;
+    --sidebar-width: 240px;
+    --navbar-height: 56px;
   }
 
   * {
@@ -17,9 +21,14 @@
   }
 
   body {
-    font-family: 'Inter', sans-serif;
-    background-color: #F4F6FB;
-    color: #1A1A2E;
+    font-family: 'DM Sans', sans-serif;
+    background-color: #FAFAF9;
+    color: #1C1917;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
 
   /* Scrollbar styling */
@@ -33,17 +42,22 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #D1D5DB;
+    background: #D6D3D1;
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #9CA3AF;
+    background: #A8A29E;
   }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+    font-family: 'JetBrains Mono', monospace;
   }
 }

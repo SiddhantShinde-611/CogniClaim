@@ -3,7 +3,7 @@ import { cn } from '../../lib/utils';
 
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
-    <div className="relative w-full overflow-auto rounded-lg border border-gray-200">
+    <div className="relative w-full overflow-auto rounded-sm border border-border">
       <table ref={ref} className={cn('w-full caption-bottom text-sm', className)} {...props} />
     </div>
   )
@@ -12,14 +12,14 @@ Table.displayName = 'Table';
 
 const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
-    <thead ref={ref} className={cn('bg-surface', className)} {...props} />
+    <thead ref={ref} className={cn('bg-panel', className)} {...props} />
   )
 );
 TableHeader.displayName = 'TableHeader';
 
 const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
-    <tbody ref={ref} className={cn('divide-y divide-gray-100', className)} {...props} />
+    <tbody ref={ref} className={cn('divide-y divide-border', className)} {...props} />
   )
 );
 TableBody.displayName = 'TableBody';
@@ -29,7 +29,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
     <tr
       ref={ref}
       className={cn(
-        'bg-white transition-colors hover:bg-surface/50 data-[state=selected]:bg-primary-50',
+        'bg-canvas hover:bg-panel/60 data-[state=selected]:bg-primary-50',
         className
       )}
       {...props}
@@ -43,7 +43,7 @@ const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<
     <th
       ref={ref}
       className={cn(
-        'h-11 px-4 text-left align-middle text-xs font-semibold uppercase tracking-wide text-gray-500',
+        'h-10 px-4 text-left align-middle text-[10px] font-semibold uppercase tracking-widest text-text-muted',
         className
       )}
       {...props}

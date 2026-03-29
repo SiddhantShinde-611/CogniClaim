@@ -14,19 +14,17 @@ export function SubmitExpensePage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Submit Expense</h1>
-          <p className="text-gray-500 text-sm">Upload a receipt for AI-powered extraction</p>
+          <h1 className="text-2xl font-semibold text-text-primary tracking-tight">Submit Expense</h1>
+          <p className="text-text-secondary text-sm">Upload a receipt for AI-powered extraction</p>
         </div>
       </div>
 
-      {/* AI Banner */}
-      <div className="bg-gradient-to-r from-primary-50 to-purple-50 border border-primary-100 rounded-xl px-4 py-3 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-          <Sparkles className="h-4 w-4 text-white" />
-        </div>
+      {/* AI Banner — copper callout */}
+      <div className="border-l-4 border-accent bg-accent-50 rounded-sm px-4 py-3 flex gap-3 items-start">
+        <Sparkles className="text-accent h-4 w-4 mt-0.5 flex-shrink-0" />
         <div>
-          <p className="text-sm font-medium text-primary">AI Receipt Extraction</p>
-          <p className="text-xs text-primary-500">Upload your receipt and Claude AI will automatically fill in the form. Review and submit!</p>
+          <p className="text-accent-700 font-semibold text-sm">AI Receipt Extraction</p>
+          <p className="text-accent-600 text-xs mt-0.5">Upload your receipt and Claude AI will automatically fill in the form. Review and submit!</p>
         </div>
       </div>
 
