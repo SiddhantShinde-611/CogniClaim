@@ -34,9 +34,11 @@ export function ExpenseForm({ onSuccess }: { onSuccess?: () => void }) {
   const { toast } = useToast();
   const submitMutation = useSubmitExpense();
 
+  const baseCurrency = user?.currency_code || 'USD';
+
   const [form, setForm] = useState<FormData>({
     amount: '',
-    currency: 'USD',
+    currency: baseCurrency,
     category: '',
     description: '',
     expense_date: new Date().toISOString().split('T')[0],
@@ -53,8 +55,7 @@ export function ExpenseForm({ onSuccess }: { onSuccess?: () => void }) {
 
   const [errors, setErrors] = useState<Partial<FormData>>({});
 
-  const { data: ratesData } = useCurrencyRates('USD');
-  const baseCurrency = user?.currency_code || 'USD';
+  const { data: ratesData } = useCurrencyRates(baseCurrency);
   const convertedAmount = useConvertedAmount(
     parseFloat(form.amount) || 0,
     form.currency,
@@ -111,7 +112,7 @@ export function ExpenseForm({ onSuccess }: { onSuccess?: () => void }) {
       toast('Expense submitted successfully!', 'success');
       setForm({
         amount: '',
-        currency: 'USD',
+        currency: baseCurrency,
         category: '',
         description: '',
         expense_date: new Date().toISOString().split('T')[0],

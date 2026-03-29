@@ -1,4 +1,14 @@
 import 'dotenv/config';
+
+// Build DATABASE_URL from parts if DB_PASSWORD is supplied separately
+// (avoids URL-encoding issues with special chars like @ in passwords)
+if (process.env.DB_HOST && process.env.DB_PASSWORD && !process.env.DATABASE_URL) {
+  const pw = encodeURIComponent(process.env.DB_PASSWORD);
+  const host = process.env.DB_HOST;
+  const ref  = process.env.DB_REF || '';
+  process.env.DATABASE_URL = `postgresql://postgres${ref}:${pw}@${host}:5432/postgres?sslmode=require`;
+  process.env.DIRECT_URL   = process.env.DATABASE_URL;
+}
 import express from 'express';
 import cors from 'cors';
 import { authRoutes } from './routes/auth.routes';
@@ -11,8 +21,22 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:4173',
+  'https://cogniclaim-app.vercel.app',
+  'https://cogniclaim.onrender.com',
+  /^https:\/\/cogniclaim.*\.vercel\.app$/,
+  /^https:\/\/frontend.*\.vercel\.app$/,
+];
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:4173'],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow server-to-server / curl
+    const allowed = allowedOrigins.some((o) =>
+      typeof o === 'string' ? o === origin : o.test(origin)
+    );
+    callback(null, allowed);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
