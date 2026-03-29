@@ -1,12 +1,11 @@
 import { Response } from 'express';
-import { PrismaClient, ExpenseStatus } from '@prisma/client';
+import { ExpenseStatus } from '@prisma/client';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import { initiateApprovalWorkflow, processApproval } from '../services/approval.service';
 import { convertAmount } from '../services/currency.service';
 import { extractReceiptData } from '../services/ocr.service';
 import { z } from 'zod';
-
-const prisma = new PrismaClient();
+import { prisma } from '../lib/prisma';
 
 const submitExpenseSchema = z.object({
   amount: z.number().positive(),

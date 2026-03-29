@@ -1,6 +1,5 @@
-import { PrismaClient, ExpenseStatus, ApprovalStatus, Role } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { ExpenseStatus, ApprovalStatus, Role } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 
 export async function initiateApprovalWorkflow(
   expenseId: string,

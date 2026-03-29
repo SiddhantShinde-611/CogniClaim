@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../lib/prisma';
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 export async function getExchangeRates(baseCurrency = 'USD'): Promise<Record<string, number>> {

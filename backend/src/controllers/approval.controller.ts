@@ -1,9 +1,8 @@
 import { Response } from 'express';
-import { PrismaClient, Role } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import { z } from 'zod';
-
-const prisma = new PrismaClient();
+import { prisma } from '../lib/prisma';
 
 const createPolicySchema = z.object({
   name: z.string().min(1),
