@@ -1,13 +1,15 @@
 import 'dotenv/config';
 
-// Build DATABASE_URL from parts if DB_PASSWORD is supplied separately
+// Build DATABASE_URL from parts if DB_HOST + DB_PASSWORD are supplied
 // (avoids URL-encoding issues with special chars like @ in passwords)
-if (process.env.DB_HOST && process.env.DB_PASSWORD && !process.env.DATABASE_URL) {
-  const pw = encodeURIComponent(process.env.DB_PASSWORD);
+// DB_HOST/DB_PASSWORD always take priority over a pre-set DATABASE_URL
+if (process.env.DB_HOST && process.env.DB_PASSWORD) {
+  const pw  = encodeURIComponent(process.env.DB_PASSWORD);
   const host = process.env.DB_HOST;
   const ref  = process.env.DB_REF || '';
-  process.env.DATABASE_URL = `postgresql://postgres${ref}:${pw}@${host}:5432/postgres?sslmode=require`;
-  process.env.DIRECT_URL   = process.env.DATABASE_URL;
+  const url  = `postgresql://postgres${ref}:${pw}@${host}:5432/postgres?sslmode=require`;
+  process.env.DATABASE_URL = url;
+  process.env.DIRECT_URL   = url;
 }
 import express from 'express';
 import cors from 'cors';
